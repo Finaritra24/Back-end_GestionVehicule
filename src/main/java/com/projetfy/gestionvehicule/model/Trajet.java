@@ -4,8 +4,8 @@ import com.projetfy.gestionvehicule.genericDAO.DBTable;
 
 public class Trajet extends DBTable {
     private String idTrajet;
-    private String DHDeb;
-    private String DHFin;
+    private String dhDeb;
+    private String dhFin;
     private String lieuDeb;
     private String lieuFin;
     private double kmDeb;
@@ -18,7 +18,35 @@ public class Trajet extends DBTable {
     private double vitesse;
 
     public Trajet() {}
-
+    public Trajet(String idTrajet, String dhDeb, String dhFin, String lieuDeb, String lieuFin, double kmDeb, double kmFin, double qteCarb, double montantCar, String motif, String idVehicule, String idChauffeur, double vitesse) {
+        this.idTrajet = idTrajet;
+        this.dhDeb = dhDeb;
+        this.dhFin = dhFin;
+        this.lieuDeb = lieuDeb;
+        this.lieuFin = lieuFin;
+        this.kmDeb = kmDeb;
+        this.kmFin = kmFin;
+        this.qteCarb = qteCarb;
+        this.montantCar = montantCar;
+        this.motif = motif;
+        this.idVehicule = idVehicule;
+        this.idChauffeur = idChauffeur;
+        this.vitesse = vitesse;
+    }
+    public Trajet( String dhDeb, String dhFin, String lieuDeb, String lieuFin, double kmDeb, double kmFin, double qteCarb, double montantCar, String motif, String idVehicule, String idChauffeur, double vitesse) {
+        this.dhDeb = dhDeb;
+        this.dhFin = dhFin;
+        this.lieuDeb = lieuDeb;
+        this.lieuFin = lieuFin;
+        this.kmDeb = kmDeb;
+        this.kmFin = kmFin;
+        this.qteCarb = qteCarb;
+        this.montantCar = montantCar;
+        this.motif = motif;
+        this.idVehicule = idVehicule;
+        this.idChauffeur = idChauffeur;
+        this.vitesse = vitesse;
+    }
     public String getIdTrajet() {
         return idTrajet;
     }
@@ -27,20 +55,20 @@ public class Trajet extends DBTable {
         this.idTrajet = idTrajet;
     }
 
-    public String getDHDeb() {
-        return DHDeb;
+    public String getDhDeb() {
+        return dhDeb;
     }
 
-    public void setDHDeb(String DHDeb) {
-        this.DHDeb = DHDeb;
+    public void setDhDeb(String dhDeb) {
+        this.dhDeb = dhDeb;
     }
 
-    public String getDHFin() {
-        return DHFin;
+    public String getDhFin() {
+        return dhFin;
     }
 
-    public void setDHFin(String DHFin) {
-        this.DHFin = DHFin;
+    public void setDhFin(String dhFin) {
+        this.dhFin = dhFin;
     }
 
     public String getLieuDeb() {
@@ -136,8 +164,8 @@ public class Trajet extends DBTable {
 public String toString() {
     return "Trajet{" +
             "idTrajet='" + idTrajet + '\'' +
-            ", DHDeb=" + DHDeb +
-            ", DHFin=" + DHFin +
+            ", DHDeb=" + dhDeb +
+            ", DHFin=" + dhFin +
             ", lieuDeb='" + lieuDeb + '\'' +
             ", lieuFin='" + lieuFin + '\'' +
             ", kmDeb=" + kmDeb +

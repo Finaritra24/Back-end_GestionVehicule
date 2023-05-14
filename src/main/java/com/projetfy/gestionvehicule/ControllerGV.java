@@ -10,8 +10,10 @@ import com.projetfy.gestionvehicule.model.Modele;
 import com.projetfy.gestionvehicule.model.Type;
 import com.projetfy.gestionvehicule.model.Vehicule;
 import com.projetfy.gestionvehicule.service.ServAdmin;
+import com.projetfy.gestionvehicule.service.ServUser;
 import com.projetfy.gestionvehicule.service.ServMarque;
 import com.projetfy.gestionvehicule.service.ServModele;
+import com.projetfy.gestionvehicule.service.ServTrajet;
 import com.projetfy.gestionvehicule.service.ServVehicule;
 import com.projetfy.gestionvehicule.service.ServType;
 
@@ -32,12 +34,12 @@ public class ControllerGV {
 
     //administrateur
 
-    @GetMapping("/getId")
-    public String getUserId(HttpServletRequest request) {
+    @GetMapping("/getAdminId")
+    public String getAdminId(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("userId")) {
+                if (cookie.getName().equals("adminId")) {
                     return cookie.getValue();
                 }
             }
@@ -52,7 +54,7 @@ public class ControllerGV {
         boolean btest=new ServAdmin().testLoginAdmin(identification, mdp);
         if (btest) {
             String id=new ServAdmin().getIdAdmin(identification, mdp);
-            Cookie cookie = new Cookie("userId", id);
+            Cookie cookie = new Cookie("adminId", id);
             cookie.setMaxAge(60 * 60 * 24); // Durée de vie du cookie (1 jour)
             response.addCookie(cookie);
             HttpHeaders headers = new HttpHeaders();
@@ -98,6 +100,7 @@ public class ControllerGV {
         return list;
     }
     //fin modele
+
     //marque
     @GetMapping("/listMarque")
     public Vector<Marque> listMarque() throws Exception{
@@ -105,6 +108,7 @@ public class ControllerGV {
         return list;
     }
     //fin marque
+
     //type
     @GetMapping("/listType")
     public Vector<Type> listType() throws Exception{
@@ -112,4 +116,66 @@ public class ControllerGV {
         return list;
     }
     //fin type
+
+    //user
+    @PostMapping("/loginUser")
+    public String testUser(@RequestBody Map<String, String> loginData, HttpServletResponse response) throws Exception{
+        String identification = loginData.get("identification");
+        String mdp = loginData.get("mdp");
+        boolean btest=new ServUser().testLoginUser(identification, mdp);
+        if (btest) {
+            String id=new ServUser().getIdUser(identification, mdp);
+            Cookie cookie = new Cookie("userId", id);
+            cookie.setMaxAge(60 * 60 * 24); // Durée de vie du cookie (1 jour)
+            response.addCookie(cookie);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(new HttpHeaders().SET_COOKIE, cookie.toString());
+            response.setStatus(HttpServletResponse.SC_OK);
+            return "Connexion réussie";
+        }
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        return "Informations d'identification incorrectes";
+    }
+    @GetMapping("/getUserId")
+    public String getUserId(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("userId")) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return "null"; // Cookie non trouvé
+    }
+    //fin user
+
+    //trajet
+    @PostMapping("/ajoutTrajet")
+    public static String ajoutTrajet(@RequestBody Map<String, String> vdata, HttpServletResponse response) {
+         String dhDeb=vdata.get("dhDeb");
+         String dhFin=vdata.get("dhFin");
+         String lieuDeb=vdata.get("lieuDeb");
+         String lieuFin=vdata.get("lieuFin");
+         double kmDeb=Double.parseDouble(vdata.get("kmDeb"));
+         double kmFin=Double.parseDouble(vdata.get("kmFin"));
+         double qteCarb=Double.parseDouble(vdata.get("qteCarb"));
+         double montantCar=Double.parseDouble(vdata.get("montantCar"));
+         String motif=vdata.get("motif");
+         String idVehicule=vdata.get("idVehicule");
+         String idChauffeur=vdata.get("idChauffeur");
+         double vitesse=Double.parseDouble(vdata.get("vitesse"));
+        ServTrajet st=new ServTrajet();
+        try {
+            st.ajoutTrajet(  dhDeb,  dhFin,  lieuDeb,  lieuFin,  kmDeb,  kmFin,  qteCarb,  montantCar,  motif,  idVehicule,  idChauffeur,  vitesse);
+            response.setStatus(HttpServletResponse.SC_OK);
+            return "Ajout réussie";
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        return "Erreur ajout trajet";
+    }
+    //fintrajet
 }
