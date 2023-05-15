@@ -1,18 +1,16 @@
 package com.projetfy.gestionvehicule.model;
 
-import java.sql.Timestamp;
-
 import com.projetfy.gestionvehicule.genericDAO.DBTable;
 
 public class EcheanceVehicule extends DBTable {
     private String idEcheanceVehicule;
-    private Timestamp dateEcheance;
+    private String dateEcheance;
     private String idTypeEcheance;
     private String idVehicule;
 
     public EcheanceVehicule() {}
 
-    public EcheanceVehicule(Timestamp dateEcheance, String idTypeEcheance, String idVehicule) {
+    public EcheanceVehicule(String dateEcheance, String idTypeEcheance, String idVehicule) {
         this.dateEcheance = dateEcheance;
         this.idTypeEcheance = idTypeEcheance;
         this.idVehicule = idVehicule;
@@ -26,11 +24,11 @@ public class EcheanceVehicule extends DBTable {
         this.idEcheanceVehicule = idEcheanceVehicule;
     }
 
-    public Timestamp getDateEcheance() {
+    public String getDateEcheance() {
         return dateEcheance;
     }
 
-    public void setDateEcheance(Timestamp dateEcheance) {
+    public void setDateEcheance(String dateEcheance) {
         this.dateEcheance = dateEcheance;
     }
 

@@ -5,17 +5,25 @@ import org.springframework.http.HttpHeaders;
 import java.util.Map;
 import java.util.Vector;
 
+import com.projetfy.gestionvehicule.model.Chauffeur;
+import com.projetfy.gestionvehicule.model.EcheanceVehicule;
+import com.projetfy.gestionvehicule.model.Lieu;
 import com.projetfy.gestionvehicule.model.Marque;
 import com.projetfy.gestionvehicule.model.Modele;
 import com.projetfy.gestionvehicule.model.Type;
+import com.projetfy.gestionvehicule.model.TypeEcheance;
 import com.projetfy.gestionvehicule.model.Vehicule;
 import com.projetfy.gestionvehicule.service.ServAdmin;
+import com.projetfy.gestionvehicule.service.ServChauffeur;
+import com.projetfy.gestionvehicule.service.ServEcheanceVehicule;
+import com.projetfy.gestionvehicule.service.ServLieu;
 import com.projetfy.gestionvehicule.service.ServUser;
 import com.projetfy.gestionvehicule.service.ServMarque;
 import com.projetfy.gestionvehicule.service.ServModele;
 import com.projetfy.gestionvehicule.service.ServTrajet;
 import com.projetfy.gestionvehicule.service.ServVehicule;
 import com.projetfy.gestionvehicule.service.ServType;
+import com.projetfy.gestionvehicule.service.ServTypeEcheance;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -68,6 +76,31 @@ public class ControllerGV {
     //fin admin
 
     //vehicule
+    @GetMapping("/getVehiculeId")
+    public static String getVehiculeId(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("idvehicule")) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return "null"; // Cookie non trouvé
+    }
+    @PostMapping("/testDispoVehicule")
+    public void testDispoVehicule(@RequestBody Map<String, String> loginData, HttpServletResponse response) throws Exception {
+    String identification = loginData.get("idv");
+    boolean btest = new ServVehicule().testDispoVehicule(identification);
+
+    if (btest) {
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().write("Véhicule disponible");
+    } else {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    }
+    }
+
     @GetMapping("/listVehicule")
     public Vector<Vehicule> listVehicule() throws Exception{
         Vector<Vehicule> list=new ServVehicule().listVehicule();
@@ -91,6 +124,24 @@ public class ControllerGV {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         return "Erreur ajout vehicule";
     }
+    @PostMapping("/profilVehicule")
+    public static String profilVehicule(@RequestBody Map<String, String> vdata, HttpServletResponse response) {
+        String id = vdata.get("id");
+        try {
+            Cookie cookie = new Cookie("idvehicule", id);
+            cookie.setMaxAge(60 * 60 * 24); // Durée de vie du cookie (1 jour)
+            response.addCookie(cookie);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(new HttpHeaders().SET_COOKIE, cookie.toString());
+            response.setStatus(HttpServletResponse.SC_OK);
+            return "Ajout réussie";
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        return "Erreur vers profil";
+    }
     //fin vehicule
 
     //modele
@@ -108,6 +159,50 @@ public class ControllerGV {
         return list;
     }
     //fin marque
+    //typeecheance
+    @GetMapping("/listTypeEcheance")
+    public Vector<TypeEcheance> listTypeEcheance() throws Exception{
+        Vector<TypeEcheance> list=new ServTypeEcheance().listTypeEcheance();
+        return list;
+    }
+    @PostMapping("/setCookieTypeEcheance")
+    public static String setCookieTypeEnchere(@RequestBody Map<String, String> vdata, HttpServletResponse response) {
+        String id = vdata.get("id");
+        try {
+            Cookie cookie = new Cookie("idtypeecheance", id);
+            cookie.setMaxAge(60 * 60 * 24); // Durée de vie du cookie (1 jour)
+            response.addCookie(cookie);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(new HttpHeaders().SET_COOKIE, cookie.toString());
+            response.setStatus(HttpServletResponse.SC_OK);
+            return "Ajout réussie";
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        return "Erreur vers  echeance";
+    }
+    @GetMapping("/getTypeEcheanceId")
+    public String getTypeEcheanceId(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("idtypeecheance")) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return "null"; // Cookie non trouvé
+    }
+    //fin typeecheance
+    //marque
+    @GetMapping("/listLieu")
+    public Vector<Lieu> listLieu() throws Exception{
+        Vector<Lieu> list=new ServLieu().listLieu();
+        return list;
+    }
+    //fin marque
 
     //type
     @GetMapping("/listType")
@@ -116,6 +211,13 @@ public class ControllerGV {
         return list;
     }
     //fin type
+    //marque
+    @GetMapping("/listChauffeur")
+    public Vector<Chauffeur> listChauffeur() throws Exception{
+        Vector<Chauffeur> list=new ServChauffeur().listChauffeur();
+        return list;
+    }
+    //fin marque
 
     //user
     @PostMapping("/loginUser")
@@ -153,17 +255,17 @@ public class ControllerGV {
     //trajet
     @PostMapping("/ajoutTrajet")
     public static String ajoutTrajet(@RequestBody Map<String, String> vdata, HttpServletResponse response) {
-         String dhDeb=vdata.get("dhDeb");
-         String dhFin=vdata.get("dhFin");
-         String lieuDeb=vdata.get("lieuDeb");
-         String lieuFin=vdata.get("lieuFin");
-         double kmDeb=Double.parseDouble(vdata.get("kmDeb"));
-         double kmFin=Double.parseDouble(vdata.get("kmFin"));
+         String dhDeb=vdata.get("dhdeb");
+         String dhFin=vdata.get("dhfin");
+         String lieuDeb=vdata.get("selectedLieuDeb");
+         String lieuFin=vdata.get("selectedLieuFin");
+         double kmDeb=Double.parseDouble(vdata.get("kmdeb"));
+         double kmFin=Double.parseDouble(vdata.get("kmfin"));
          double qteCarb=Double.parseDouble(vdata.get("qteCarb"));
          double montantCar=Double.parseDouble(vdata.get("montantCar"));
          String motif=vdata.get("motif");
-         String idVehicule=vdata.get("idVehicule");
-         String idChauffeur=vdata.get("idChauffeur");
+         String idVehicule=vdata.get("selectedVehicule");
+         String idChauffeur=vdata.get("selectedChauffeur");
          double vitesse=Double.parseDouble(vdata.get("vitesse"));
         ServTrajet st=new ServTrajet();
         try {
@@ -178,4 +280,77 @@ public class ControllerGV {
         return "Erreur ajout trajet";
     }
     //fintrajet
+    //echeance vehicule
+    @PostMapping("/ajoutAssurance")
+    public static String ajoutEcheanceVehicule(@RequestBody Map<String, String> vdata, HttpServletResponse response,HttpServletRequest request) throws Exception {
+        String de = vdata.get("dateecheance");
+        String st = vdata.get("selectedType");
+        String idv=getVehiculeId(request);
+        ServEcheanceVehicule sv=new ServEcheanceVehicule();
+        if(!sv.ifecheance(st, idv)) {
+            sv.ajoutEcheanceVehicule(de, st,idv);
+            response.setStatus(HttpServletResponse.SC_OK);
+            return "Ajout réussie";
+        } 
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        return "Erreur ajout echeance vehicule";
+    }
+    @GetMapping("/listAssurance")
+    public Vector<EcheanceVehicule> listEcheanceVehicule(HttpServletRequest request) throws Exception{
+        String idv=getVehiculeId(request);
+        Vector<EcheanceVehicule> list=new ServEcheanceVehicule().filtreListEcheanceVehicule(idv);
+        return list;
+    }
+    @GetMapping("/listProfilTypeAssurance")
+    public Vector<EcheanceVehicule> listProfilTypeAssurance(HttpServletRequest request) throws Exception{
+        String idv=getTypeEcheanceId(request);
+        Vector<EcheanceVehicule> list=new ServEcheanceVehicule().filtreListEcheanceVehicule(idv);
+        return list;
+    }
+    @PostMapping("/cookiModifEcheance")
+    public static String cookiModifEcheance(@RequestBody Map<String, String> vdata, HttpServletResponse response) {
+        String id = vdata.get("id");
+        try {
+            Cookie cookie = new Cookie("idecheance", id);
+            cookie.setMaxAge(60 * 60 * 24); // Durée de vie du cookie (1 jour)
+            response.addCookie(cookie);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(new HttpHeaders().SET_COOKIE, cookie.toString());
+            response.setStatus(HttpServletResponse.SC_OK);
+            return "Ajout réussie";
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        return "Erreur vers profil";
+    }
+    @PostMapping("/modifEcheance")
+    public static String modifEcheance(@RequestBody Map<String, String> vdata, HttpServletResponse response,HttpServletRequest request) {
+        String date = vdata.get("dateecheance");
+        try {
+            String ide=getEcheanceId(request);
+            new ServEcheanceVehicule().updateEcheanceVehicule(date, ide);
+            response.setStatus(HttpServletResponse.SC_OK);
+            return "Modif réussie";
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        return "Erreur modif";
+    }
+    @GetMapping("/getEcheanceId")
+    public static String getEcheanceId(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("idecheance")) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return "null"; // Cookie non trouvé
+    }
+    //fin echeance vehicule
 }
