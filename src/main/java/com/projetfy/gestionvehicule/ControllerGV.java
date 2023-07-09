@@ -1,8 +1,22 @@
 package com.projetfy.gestionvehicule;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 
+import org.springframework.core.io.ResourceLoader;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Vector;
 
 import com.projetfy.gestionvehicule.model.Chauffeur;
@@ -22,11 +36,16 @@ import com.projetfy.gestionvehicule.service.ServMarque;
 import com.projetfy.gestionvehicule.service.ServModele;
 import com.projetfy.gestionvehicule.service.ServTrajet;
 import com.projetfy.gestionvehicule.service.ServVehicule;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+
 import com.projetfy.gestionvehicule.service.ServType;
 import com.projetfy.gestionvehicule.service.ServTypeEcheance;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +57,42 @@ import jakarta.servlet.http.HttpServletResponse;
 @RestController
 @CrossOrigin
 public class ControllerGV {
+    //test
+    @Autowired
+    private Configuration freemarkerConfig;
 
+    @GetMapping("/myAjoutAffiche")
+    public String myAjoutAffiche(Model model) {
+        String stateDeclarations = "const [numero, setNumero] = useState('');";
+        String effectDeclarations = "function handleSubmit(event) {event.preventDefault();console.log(marque);}"; 
+
+        model.addAttribute("stateDeclarations", stateDeclarations);
+        model.addAttribute("effectDeclarations", effectDeclarations);
+
+        return "ajout";
+    }
+
+    
+    @GetMapping("/ajoutComponent")
+    @ResponseBody
+    public ResponseEntity<String> getAjoutComponent() {
+        try {
+            Resource resource = new ClassPathResource("static/Ajout.jsx");
+            String content = new String(Files.readAllBytes(resource.getFile().toPath()), StandardCharsets.UTF_8);
+            String stringStateDeclarations = "const [marque, setMarque] = useState('');\n";
+            String stringEffectDeclarations = "const handleSubmit = event => { \n event.preventDefault(); \n console.log(marque); \n };";
+    
+            // Remplacer les balises spéciales par les valeurs réelles
+            content = content.replace("{stateDeclarations}", stringStateDeclarations);
+            content = content.replace("{effectDeclarations}", stringEffectDeclarations);
+    
+            return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN).body(content);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error");
+        }
+    }
+    
 
     //administrateur
 
@@ -220,6 +274,18 @@ public class ControllerGV {
     //fin marque
 
     //user
+    @PostMapping("/ifMdpUser")
+    public String ifMdpUser(@RequestBody Map<String, String> loginData, HttpServletResponse response,HttpServletRequest request) throws Exception{
+        String mdp = loginData.get("mdp");
+        String id=getUserId(request);
+        boolean btest=new ServUser().ifMdp(id, mdp);
+        if (btest) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return "Connexion réussie";
+        }
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        return "Informations d'identification incorrectes";
+    }
     @PostMapping("/loginUser")
     public String testUser(@RequestBody Map<String, String> loginData, HttpServletResponse response) throws Exception{
         String identification = loginData.get("identification");

@@ -9,6 +9,11 @@ public class Administrateur extends DBTable {
 
     public Administrateur() {}
 
+    public Administrateur(String idAdmin,String identification, String passwrd) {
+        this.idAdmin=idAdmin;
+        this.identification = identification;
+        this.passwrd = passwrd;
+    }
     public Administrateur(String identification, String passwrd) {
         this.identification = identification;
         this.passwrd = passwrd;

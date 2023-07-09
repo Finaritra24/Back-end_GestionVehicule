@@ -20,7 +20,7 @@ import java.util.Vector;
 public abstract class DBTable {
 
     public abstract String getSeqName();
-
+    
     public String toUpper(String s) {
         return s.substring(0, 1).toUpperCase() + s.substring(1);
     }

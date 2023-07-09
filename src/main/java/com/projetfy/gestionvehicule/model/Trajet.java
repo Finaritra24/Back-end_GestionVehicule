@@ -8,17 +8,17 @@ public class Trajet extends DBTable {
     private String dhFin;
     private String lieuDeb;
     private String lieuFin;
-    private double kmDeb;
-    private double kmFin;
-    private double qteCarb;
-    private double montantCar;
+    private Double kmDeb;
+    private Double kmFin;
+    private Double qteCarb;
+    private Double montantCar;
     private String motif;
     private String idVehicule;
     private String idChauffeur;
-    private double vitesse;
+    private Double vitesse;
 
     public Trajet() {}
-    public Trajet(String idTrajet, String dhDeb, String dhFin, String lieuDeb, String lieuFin, double kmDeb, double kmFin, double qteCarb, double montantCar, String motif, String idVehicule, String idChauffeur, double vitesse) {
+    public Trajet(String idTrajet, String dhDeb, String dhFin, String lieuDeb, String lieuFin, Double kmDeb, Double kmFin, Double qteCarb, Double montantCar, String motif, String idVehicule, String idChauffeur, Double vitesse) {
         this.idTrajet = idTrajet;
         this.dhDeb = dhDeb;
         this.dhFin = dhFin;
@@ -33,7 +33,7 @@ public class Trajet extends DBTable {
         this.idChauffeur = idChauffeur;
         this.vitesse = vitesse;
     }
-    public Trajet( String dhDeb, String dhFin, String lieuDeb, String lieuFin, double kmDeb, double kmFin, double qteCarb, double montantCar, String motif, String idVehicule, String idChauffeur, double vitesse) {
+    public Trajet( String dhDeb, String dhFin, String lieuDeb, String lieuFin, Double kmDeb, Double kmFin, Double qteCarb, Double montantCar, String motif, String idVehicule, String idChauffeur, Double vitesse) {
         this.dhDeb = dhDeb;
         this.dhFin = dhFin;
         this.lieuDeb = lieuDeb;
@@ -87,35 +87,35 @@ public class Trajet extends DBTable {
         this.lieuFin = lieuFin;
     }
 
-    public double getKmDeb() {
+    public Double getKmDeb() {
         return kmDeb;
     }
 
-    public void setKmDeb(double kmDeb) {
+    public void setKmDeb(Double kmDeb) {
         this.kmDeb = kmDeb;
     }
 
-    public double getKmFin() {
+    public Double getKmFin() {
         return kmFin;
     }
 
-    public void setKmFin(double kmFin) {
+    public void setKmFin(Double kmFin) {
         this.kmFin = kmFin;
     }
 
-    public double getQteCarb() {
+    public Double getQteCarb() {
         return qteCarb;
     }
 
-    public void setQteCarb(double qteCarb) {
+    public void setQteCarb(Double qteCarb) {
         this.qteCarb = qteCarb;
     }
 
-    public double getMontantCar() {
+    public Double getMontantCar() {
         return montantCar;
     }
 
-    public void setMontantCar(double montantCar) {
+    public void setMontantCar(Double montantCar) {
         this.montantCar = montantCar;
     }
 
@@ -143,11 +143,11 @@ public class Trajet extends DBTable {
         this.idChauffeur = idChauffeur;
     }
 
-    public double getVitesse() {
+    public Double getVitesse() {
         return vitesse;
     }
 
-    public void setVitesse(double vitesse) {
+    public void setVitesse(Double vitesse) {
         this.vitesse = vitesse;
     }
 

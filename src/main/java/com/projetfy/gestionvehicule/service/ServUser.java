@@ -46,4 +46,12 @@ public class ServUser {
         }
         return userId;
     }
+    public static boolean ifMdp(String id,String mdp) throws Exception{
+        Vector<Utilisateur> list=new Utilisateur().find("SELECT * FROM utilisateur where iduser='"+id+"' and passwrd='"+mdp+"'", null);
+        if(list.size()>=1){return true;}
+        return false;
+    }
+    public static void main(String[]args) throws Exception{
+        System.out.print(ifMdp("USR1","pass1"));
+    }
 }
